@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+  nginx-app:
+    container_name: nginx-app
+    restart: always
+    build: ./nginx/
+    ports:
+      - "80:80"
+    volumes:
+      - ../:/app
+    environment:
+      NGINX_HOST: ${BACKEND_NGINX_HOST}
+      NGINX_PORT: 80
+      FPM_HOST: app
+      FPM_PORT: 9000
+    depends_on:
+      - app
+
+  app:
+    container_name: app
+    links:
+    - db
+    restart: always
+    build: ./php/
+    environment:
+      CONFIG_TYPE: ${CONFIG_TYPE}
+    volumes:
+      - ../:/app
+      - ./logs:/var/log/sender
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      - MYSQL_DATABASE=books
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - ./database:/var/lib/mysql
