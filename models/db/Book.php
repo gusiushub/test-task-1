@@ -27,6 +27,7 @@ class Book extends ActiveRecord
     {
         return 'book';
     }
+    
     /**
      * @return array
      */

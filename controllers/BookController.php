@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\db\Book;
 use app\models\db\Permission;
+use yii\web\NotFoundHttpException;
 use app\service\book\dto\CreateDto;
 use app\service\book\dto\UpdateDto;
 use yii\filters\auth\HttpBearerAuth;
@@ -13,7 +14,6 @@ use app\models\db\search\Book as SearchBook;
 use app\models\response\Book as ResponseBook;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
-use yii\web\NotFoundHttpException;
 
 class BookController extends ApiController
 {

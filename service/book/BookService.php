@@ -2,13 +2,16 @@
 
 namespace app\service\book;
 
+use Yii;
 use DateTime;
 use Exception;
 use yii\helpers\Json;
 use app\models\db\Book;
 use app\models\db\BookAuthor;
+use app\models\db\Followers;
 use app\service\book\dto\UpdateDto;
 use app\service\book\dto\CreateDto;
+use app\service\smspilot\SmsServiceInterface;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 
@@ -51,6 +54,20 @@ class BookService implements \app\service\book\BookServiceInterface
                 throw new BadRequestHttpException(Json::encode($bookAuthor->errors));
             }
             $bookAuthor->save();
+
+            $smsService = Yii::createObject(
+                SmsServiceInterface::class, 
+                [
+                    'apiKey' => 'XXXXXXXXXXXXYYYYYYYYYYYYZZZZZZZZXXXXXXXXXXXXYYYYYYYYYYYYZZZZZZZZ',
+                    'host' => 'smspilot.ru',
+                ]
+            );
+
+            //@todo подобный функционал обычно реализуется через очередь, допустим, Rabbitmq
+            $followers = Followers::findAll(['author_id' => $dto->authorId]);
+            foreach($followers as $follower) {
+                $smsService->setMsg('Вышла новая книга')->setMsisdn($follower->msisdn)->sendSms();
+            }
 
             $transaction->commit();
         } catch (Exception $exception) {

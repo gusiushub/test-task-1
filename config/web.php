@@ -4,6 +4,10 @@ use app\service\author\AuthorService;
 use app\service\author\AuthorServiceInterface;
 use app\service\book\BookService;
 use app\service\book\BookServiceInterface;
+use app\service\followers\FollowersService;
+use app\service\followers\FollowersServiceInterface;
+use app\service\smspilot\SmsService;
+use app\service\smspilot\SmsServiceInterface;
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
@@ -14,8 +18,10 @@ $config = [
     'bootstrap' => ['log'],
     'container' => [
         'definitions' => [
+            SmsServiceInterface::class => SmsService::class,
             BookServiceInterface::class => BookService::class,
-            AuthorServiceInterface::class => AuthorService::class
+            AuthorServiceInterface::class => AuthorService::class,
+            FollowersServiceInterface::class => FollowersService::class
         ]
     ],
     'aliases' => [
@@ -65,7 +71,10 @@ $config = [
                 'author/<id:\d+>' => 'author/get',
                 'author/<id:\d+>/delete' => 'author/delete',
                 'author/<id:\d+>/update' => 'author/update',
-                'author/list' => 'author/list'
+                'author/list' => 'author/list',
+
+                'followers/<msisdn:\d+>/author/<authorId:\d+>' => 'followers/create',
+                'followers/list' => 'follower/list',
             ],
         ],
     ],
