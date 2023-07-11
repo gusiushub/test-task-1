@@ -39,4 +39,9 @@ class Author extends ActiveRecord
         ];
     }
 
+    public function getBooks()
+    {
+        return $this->hasMany(Book::class, ['author_id' => 'author_id']);
+    }
+
 }
